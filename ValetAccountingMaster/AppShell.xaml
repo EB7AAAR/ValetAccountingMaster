@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="ValetAccountingMaster.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:ValetAccountingMaster"
+    xmlns:view="clr-namespace:ValetAccountingMaster.View"
+    Shell.FlyoutBehavior="Disabled"
+    >
+    <ShellContent
+        Shell.NavBarIsVisible="True"
+        Title="Records"
+        ContentTemplate="{DataTemplate view:MainPage}"
+        Route="MainPage" />
+    
+</Shell>

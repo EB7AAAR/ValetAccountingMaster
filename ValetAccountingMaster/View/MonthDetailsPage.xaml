@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ValetAccountingMaster.View.MonthDetailsPage"
+             xmlns:model="clr-namespace:ValetAccountingMaster.Model"
+             xmlns:viewmodel="clr-namespace:ValetAccountingMaster.ViewModel"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:DataType="viewmodel:MonthDetailsViewModel"
+             Title="{Binding Title}"
+             FlowDirection="LeftToRight">
+    <Grid RowDefinitions="80,75,*">
+        <Grid Grid.Row="0"
+              BackgroundColor="Transparent"
+              ColumnDefinitions="*,*,*"
+              RowDefinitions="*,*">
+            <HorizontalStackLayout Grid.Column="1"
+                                   Grid.Row="0"
+                                   Grid.ColumnSpan="2"
+                                   BackgroundColor="Transparent"
+                                   Spacing="5"
+                                   VerticalOptions="End">
+                <Label Text="DATE:"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center" />
+                <DatePicker x:Name="datePicker"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Date="{Binding CurrentDateTime}"
+                            PropertyChanged="DatePicker_PropertyChanged"/>
+                <Label Text="SITE  :"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"></Label>
+                <Picker x:Name="picker"
+                        Title="Select Site"
+                        VerticalOptions="Center"
+                        ItemsSource="{Binding Sites}"
+                        SelectedItem="{Binding SelectedSite ,Mode=TwoWay}"
+                        ItemDisplayBinding="{Binding ID}"
+                        SelectedIndex="{Binding SelectedSiteIndex}"
+                        HorizontalTextAlignment="Center"
+                        SelectedIndexChanged="Picker_SelectedIndexChanged"/>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Grid.Column="1"
+                                   Grid.Row="1"
+                                   VerticalOptions="Center"
+                                   BackgroundColor="Transparent"></HorizontalStackLayout>
+            <Frame Grid.Column="0"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"
+                   BackgroundColor="Transparent"
+                   VerticalOptions="Center">
+                <Button BackgroundColor="BlueViolet"
+                        Text="Details"
+                        VerticalOptions="Center"
+                        TextColor="White"
+                        Command="{Binding GoToDayDetailsCommand}"
+                        CommandParameter="{Binding .}"/>
+            </Frame>
+        </Grid>
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*,*,*,*"
+              ColumnSpacing="5"
+              RowDefinitions="100"
+              RowSpacing="1"
+              Background="BlueViolet">
+            <VerticalStackLayout Grid.Column="0"
+                                 Grid.Row="0">
+                <Label Text="Income"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding CurrentViewMonthRecord.Income}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1"
+                                 Grid.Row="0">
+                <Label Text="Expenses"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding CurrentViewMonthRecord.DailyExp}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2"
+                                 Grid.Row="0">
+                <Label Text="Tips"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding CurrentViewMonthRecord.Tip}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="3"
+                                 Grid.Row="0">
+                <Label Text="Net"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding CurrentViewMonthRecord.DailyNet}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="4"
+                                 Grid.Row="0">
+                <Label Text="Exp/Inc"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding ExpensesPercent,StringFormat='{0:F1}%'}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
+        <Grid Grid.Row="2">
+            <lvc:PieChart Series="{Binding Series1}"
+                          BackgroundColor="Transparent"
+                          HeightRequest="350"
+                          HorizontalOptions="Center"
+                          InitialRotation="45"
+                          MaxAngle="270"
+                          Total="{Binding PieTotal}"></lvc:PieChart>
+        </Grid>
+    </Grid>
+</ContentPage>

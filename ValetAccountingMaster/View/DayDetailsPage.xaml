@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ValetAccountingMaster.View.DayDetailsPage"
+             xmlns:model="clr-namespace:ValetAccountingMaster.Model"
+             xmlns:viewmodel="clr-namespace:ValetAccountingMaster.ViewModel"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:DataType="viewmodel:DayDetailsViewModel"
+             Title="{Binding Title}"
+             FlowDirection="LeftToRight">
+    <Grid RowDefinitions="50,35,*">
+        <Grid Grid.Row="0"
+              ColumnDefinitions="*,*"
+              BackgroundColor="Transparent"
+              ColumnSpacing="40">
+            <HorizontalStackLayout BackgroundColor="Transparent"
+                                   VerticalOptions="Center"
+                                   Grid.Column="0">
+                <Label Text="DATE:"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       FontSize="20" />
+                <DatePicker x:Name="datePicker"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Date="{Binding CurrentDateTime}"
+                            PropertyChanged="DatePicker_PropertyChanged"
+                            FontSize="20" />
+            </HorizontalStackLayout>
+            <HorizontalStackLayout BackgroundColor="Transparent"
+                                   Grid.Column="1"
+                                   VerticalOptions="Center">
+                <Label Text="SITE  :"
+                       HorizontalTextAlignment="Center"
+                       VerticalTextAlignment="Center"
+                       FontSize="20" />
+                <Picker x:Name="picker"
+                        Title="Select Site"
+                        VerticalOptions="Center"
+                        ItemsSource="{Binding Sites}"
+                        SelectedItem="{Binding SelectedSite ,Mode=TwoWay}"
+                        ItemDisplayBinding="{Binding ID}"
+                        SelectedIndex="{Binding SelectedSiteIndex}"
+                        HorizontalTextAlignment="Center"
+                        SelectedIndexChanged="Picker_SelectedIndexChanged"
+                        FontSize="20" />
+            </HorizontalStackLayout>
+        </Grid>
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*,*,*,*,*"
+              ColumnSpacing="5"
+              Background="BlueViolet">
+            <Label Text="Day"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="0"
+                   Grid.Row="0" />
+            <Label Text="Inc"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="1"
+                   Grid.Row="0" />
+            <Label Text="Exp"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="2"
+                   Grid.Row="0" />
+            <Label Text="Tip"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="3"
+                   Grid.Row="0" />
+            <Label Text="Net"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="4"
+                   Grid.Row="0" />
+            <Label Text="wrks"
+                   Margin="5"
+                   HorizontalTextAlignment="Center"
+                   Grid.Column="5"
+                   Grid.Row="0" />
+            
+        </Grid>
+        <Grid Grid.Row="2">
+            <ActivityIndicator HorizontalOptions="FillAndExpand"
+                               IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}"
+                               VerticalOptions="CenterAndExpand" />
+            <CollectionView IsVisible="{Binding IsNotBusy}"
+                            ItemsSource="{Binding SelectedMonthRecords}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:SqlRecord">
+                        <Grid>
+                            <Frame HeightRequest="40"
+                                   Style="{StaticResource CardView}">
+                                <Grid Padding="0"
+                                      ColumnDefinitions="*,*,*,*,*,*">
+                                    <Label Grid.Column="0"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding Date.Day}" />
+                                    <Label Grid.Column="1"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding Income}" />
+                                    <Label Grid.Column="2"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding DailyExp}" />
+                                    <Label Grid.Column="3"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding Tip}" />
+                                    <Label Grid.Column="4"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding DailyNet}" />
+                                    <Label Grid.Column="5"
+                                           VerticalOptions="Center"
+                                           HorizontalOptions="Center"
+                                           Text="{Binding Workers}" />
+                                    
+                                </Grid>
+                            </Frame>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </Grid>
+</ContentPage>

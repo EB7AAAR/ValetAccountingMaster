@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ValetAccountingMaster.View.MainPage"
+             xmlns:model="clr-namespace:ValetAccountingMaster.Model"
+             xmlns:viewmodel="clr-namespace:ValetAccountingMaster.ViewModel"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.Maui;assembly=LiveChartsCore.SkiaSharpView.Maui"
+             x:DataType="viewmodel:RecordsViewModel"
+             Title="{Binding Title}"
+             FlowDirection="LeftToRight">
+    <Grid RowDefinitions="80,75,*">
+        <Grid Grid.Row="0"
+              BackgroundColor="Transparent"
+              ColumnDefinitions="*,*,*"
+              RowDefinitions="*,*">
+            <Frame Grid.Column="1"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Grid.RowSpan="2"
+                   BackgroundColor="Transparent">
+                <HorizontalStackLayout>
+                    <Label Text="SELECT A DATE:"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="15" />
+                    <DatePicker x:Name="datePicker"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                Date="{Binding CurrentDateTime}"
+                                PropertyChanged="DatePicker_PropertyChanged"
+                                FontSize="15" />
+                </HorizontalStackLayout>
+            </Frame>
+            <Frame Grid.Column="0"
+                   Grid.Row="0"
+                   Grid.RowSpan="2"
+                   BackgroundColor="Transparent">
+                <Button BackgroundColor="BlueViolet"
+                        Text="Details"
+                        TextColor="White"
+                        Command="{Binding GoToMonthDetailsCommand}"
+                        CommandParameter="{Binding .}" />
+            </Frame>
+        </Grid>
+        <Grid Grid.Row="1"
+              ColumnDefinitions="*,*,*,*,*"
+              ColumnSpacing="5"
+              RowDefinitions="100"
+              RowSpacing="1"
+              Background="BlueViolet">
+            <VerticalStackLayout Grid.Column="0"
+                                 Grid.Row="0">
+                <Label Text="Income"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding AllSitesIncome}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="1"
+                                 Grid.Row="0">
+                <Label Text="Expenses"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding AllSitesExpenses}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="2"
+                                 Grid.Row="0">
+                <Label Text="Tips"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding AllSitesTips}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="3"
+                                 Grid.Row="0">
+                <Label Text="Net"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding AllSitesNet}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+            <VerticalStackLayout Grid.Column="4"
+                                 Grid.Row="0">
+                <Label Text="Epx/Inc"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+                <Label Text="{Binding AllExpensesPercent,StringFormat='{0:F1}%'}"
+                       Margin="5"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </Grid>
+        <Grid Grid.Row="2">
+            <!--<lvc:PieChart Grid.Row="0"
+                          Series="{Binding Series1}"
+                          BackgroundColor="Transparent"
+                          HeightRequest="200"
+                          HorizontalOptions="Center">
+                <lvc:PieChart.Resources>
+                    
+                </lvc:PieChart.Resources>
+            </lvc:PieChart>-->
+            <lvc:PieChart Series="{Binding Series1}"
+                          BackgroundColor="Transparent"
+                          HeightRequest="350"
+                          HorizontalOptions="Center"
+                          InitialRotation="45"
+                          MaxAngle="270"
+                          Total="{Binding PieTotal}"></lvc:PieChart>
+        </Grid>
+    </Grid>
+</ContentPage>
