@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ValetAccountingMaster.View.MainPage"
@@ -107,10 +107,11 @@
             <lvc:PieChart Series="{Binding Series1}"
                           BackgroundColor="Transparent"
                           HeightRequest="350"
-                          HorizontalOptions="Center"
+                          HorizontalOptions="FillAndExpand"
+                          VerticalOptions="FillAndExpand"
                           InitialRotation="45"
                           MaxAngle="270"
-                          Total="{Binding PieTotal}"></lvc:PieChart>
+                          MaxValue="{Binding PieTotal}"></lvc:PieChart>
         </Grid>
     </Grid>
 </ContentPage>
