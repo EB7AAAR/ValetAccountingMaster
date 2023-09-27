@@ -112,7 +112,7 @@ namespace ValetAccountingMaster.ViewModel
                     DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
                     DataLabelsFormatter = point=>  $"Expenses {CurrentViewMonthRecord.DailyExp}",
                     DataLabelsRotation = LiveCharts.TangentAngle,
-                    Pushout = 30,
+                    Pushout = 10,
                     Fill = new SolidColorPaint(SKColors.BlueViolet)
                 },
                 new PieSeries<double>

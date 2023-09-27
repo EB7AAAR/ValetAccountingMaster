@@ -13,12 +13,16 @@
               BackgroundColor="Transparent"
               ColumnDefinitions="*,*,*"
               RowDefinitions="*,*">
-            <HorizontalStackLayout Grid.Column="1"
-                                   Grid.Row="0"
-                                   Grid.ColumnSpan="2"
-                                   BackgroundColor="Transparent"
-                                   Spacing="5"
-                                   VerticalOptions="End">
+            <Frame Grid.Column="1"
+                   Grid.Row="0"
+                   Grid.ColumnSpan="2"
+                   Grid.RowSpan="2"
+                   BackgroundColor="Transparent">
+
+
+
+            
+            <HorizontalStackLayout >
                 <Label Text="DATE:"
                        HorizontalOptions="Center"
                        VerticalOptions="Center" />
@@ -40,6 +44,7 @@
                         HorizontalTextAlignment="Center"
                         SelectedIndexChanged="Picker_SelectedIndexChanged"/>
             </HorizontalStackLayout>
+                </Frame>
             <HorizontalStackLayout Grid.Column="1"
                                    Grid.Row="1"
                                    VerticalOptions="Center"
@@ -67,45 +72,56 @@
                                  Grid.Row="0">
                 <Label Text="Income"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding CurrentViewMonthRecord.Income}"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="1"
                                  Grid.Row="0">
                 <Label Text="Expenses"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding CurrentViewMonthRecord.DailyExp}"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="2"
                                  Grid.Row="0">
                 <Label Text="Tips"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding CurrentViewMonthRecord.Tip}"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="3"
                                  Grid.Row="0">
                 <Label Text="Net"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding CurrentViewMonthRecord.DailyNet}"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="4"
                                  Grid.Row="0">
                 <Label Text="Exp/Inc"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding ExpensesPercent,StringFormat='{0:F1}%'}"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
         </Grid>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ValetAccountingMaster.View.DayDetailsPage"
@@ -9,43 +9,61 @@
              Title="{Binding Title}"
              FlowDirection="LeftToRight">
     <Grid RowDefinitions="50,35,*">
-        <Grid Grid.Row="0"
-              ColumnDefinitions="*,*"
-              BackgroundColor="Transparent"
-              ColumnSpacing="40">
-            <HorizontalStackLayout BackgroundColor="Transparent"
-                                   VerticalOptions="Center"
-                                   Grid.Column="0">
-                <Label Text="DATE:"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       FontSize="20" />
-                <DatePicker x:Name="datePicker"
-                            HorizontalOptions="Center"
+         <Grid Grid.Row="0"
+       ColumnDefinitions="*,*,*"
+       BackgroundColor="Transparent"
+       ColumnSpacing="50"
+       >
+     
+     <HorizontalStackLayout BackgroundColor="Transparent"
                             VerticalOptions="Center"
-                            Date="{Binding CurrentDateTime}"
-                            PropertyChanged="DatePicker_PropertyChanged"
-                            FontSize="20" />
-            </HorizontalStackLayout>
-            <HorizontalStackLayout BackgroundColor="Transparent"
-                                   Grid.Column="1"
-                                   VerticalOptions="Center">
-                <Label Text="SITE  :"
-                       HorizontalTextAlignment="Center"
-                       VerticalTextAlignment="Center"
-                       FontSize="20" />
-                <Picker x:Name="picker"
-                        Title="Select Site"
-                        VerticalOptions="Center"
-                        ItemsSource="{Binding Sites}"
-                        SelectedItem="{Binding SelectedSite ,Mode=TwoWay}"
-                        ItemDisplayBinding="{Binding ID}"
-                        SelectedIndex="{Binding SelectedSiteIndex}"
-                        HorizontalTextAlignment="Center"
-                        SelectedIndexChanged="Picker_SelectedIndexChanged"
-                        FontSize="20" />
-            </HorizontalStackLayout>
-        </Grid>
+                            Grid.Column="0"
+                            >
+         <Label Text="DATE:"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                FontSize="20" />
+         <DatePicker x:Name="datePicker"
+                     HorizontalOptions="Center"
+                     VerticalOptions="Center"
+                     Date="{Binding CurrentDateTime}"
+                     PropertyChanged="DatePicker_PropertyChanged"
+                     FontSize="20" />
+         
+     </HorizontalStackLayout>
+     <HorizontalStackLayout BackgroundColor="Transparent"
+                            Grid.Column="1"
+                            VerticalOptions="Center"
+                            >
+         <Label Text="SITE  :"
+                HorizontalTextAlignment="Center"
+                VerticalTextAlignment="Center"
+                FontSize="20" />
+         <Picker x:Name="picker"
+                 Title="Select Site"
+                 VerticalOptions="Center"
+                 ItemsSource="{Binding Sites}"
+                 SelectedItem="{Binding SelectedSite ,Mode=TwoWay}"
+                 ItemDisplayBinding="{Binding ID}"
+                 SelectedIndex="{Binding SelectedSiteIndex}"
+                 HorizontalTextAlignment="Center"
+                 SelectedIndexChanged="Picker_SelectedIndexChanged"
+                 FontSize="20" />
+     </HorizontalStackLayout >
+     <HorizontalStackLayout Grid.Column="2"
+                            Padding="5">
+         <Button BackgroundColor="BlueViolet"
+                 Text="Export"
+                 TextColor="White"
+                 HorizontalOptions="Center"
+                 VerticalOptions="Center"
+                 Command="{Binding ExportCommand}"
+                 >
+             
+         </Button>
+     </HorizontalStackLayout>
+     
+ </Grid>
         <Grid Grid.Row="1"
               ColumnDefinitions="*,*,*,*,*,*"
               ColumnSpacing="5"
@@ -54,28 +72,34 @@
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="0"
+                   TextColor="White"
                    Grid.Row="0" />
             <Label Text="Inc"
+                   TextColor="White"
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="1"
                    Grid.Row="0" />
             <Label Text="Exp"
+                   TextColor="White"
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="2"
                    Grid.Row="0" />
             <Label Text="Tip"
+                   TextColor="White"
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="3"
                    Grid.Row="0" />
             <Label Text="Net"
+                   TextColor="White"
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="4"
                    Grid.Row="0" />
             <Label Text="wrks"
+                   TextColor="White"
                    Margin="5"
                    HorizontalTextAlignment="Center"
                    Grid.Column="5"

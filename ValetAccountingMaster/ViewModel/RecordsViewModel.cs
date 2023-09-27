@@ -99,6 +99,8 @@ namespace ValetAccountingMaster.ViewModel
             //dotnet publish -c Release -f:net7.0-android
 
             //File.Delete(Path.Combine(FileSystem.AppDataDirectory, "MyDatabase.db3"));
+            //dotnet publish -f net7.0-ios -c Release -p:ArchiveOnBuild=true -p:RuntimeIdentifier=ios-arm64 -p:CodesignKey="Apple Distribution: John Smith (AY2GDE9QM7)" -p:CodesignProvision="MyMauiApp"
+
             Title = "TOTAL MONTH SUMMERY";
             fireBaseService = new FireBaseService(Records);
             context = databaseContext;
@@ -240,7 +242,7 @@ namespace ValetAccountingMaster.ViewModel
                     DataLabelsPosition = LiveChartsCore.Measure.PolarLabelsPosition.Middle,
                     DataLabelsFormatter = point=>  $"Expenses {AllSitesExpenses}",
                     DataLabelsRotation = LiveCharts.TangentAngle,
-                    Pushout = 30,
+                    Pushout = 10,
                     Fill = new SolidColorPaint(SKColors.BlueViolet)
                 },
                 new PieSeries<double>

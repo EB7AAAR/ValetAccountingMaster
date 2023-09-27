@@ -5,6 +5,12 @@ using LiveChartsCore;
 using System.Collections.ObjectModel;
 using ValetAccountingMaster.Model;
 using ValetAccountingMaster.Data;
+using CommunityToolkit.Mvvm.Input;
+using System.Data;
+using ClosedXML.Excel;
+using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Storage;
 
 namespace ValetAccountingMaster.ViewModel
 {
@@ -81,5 +87,79 @@ namespace ValetAccountingMaster.ViewModel
             SelectedMonthRecords = monthRecords;
             
         }
+
+        [RelayCommand]
+        async Task Export()
+        {
+            try
+            {
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Day");
+                dt.Columns.Add("Inc");
+                dt.Columns.Add("Exp");
+                dt.Columns.Add("Tip");
+                dt.Columns.Add("Net");
+                dt.Columns.Add("Wrks");
+
+                foreach (SqlRecord s in SelectedMonthRecords)
+                {
+                    DataRow dr = dt.NewRow();
+                    dr[0] = s.Date;
+                    dr[1] = Convert.ToDouble(s.Income);
+                    dr[2] = Convert.ToDouble(s.DailyExp);
+                    dr[3] = Convert.ToDouble(s.Tip);
+                    dr[4] = Convert.ToDouble(s.DailyNet);
+                    dr[5] = Convert.ToDouble(s.Workers);
+                    dt.Rows.Add(dr);
+                }
+
+                dt.AcceptChanges();
+
+                string filename = CurrentDateTime.Month.ToString() + "-" + CurrentDateTime.Year.ToString() + "-" + SelectedSite.ID;
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
+
+                XLWorkbook wb = new XLWorkbook();
+
+                var ws = wb.Worksheets.Add(dt, "Sheet 1");
+
+                //if (filename.Contains("."))
+                //{
+                    //int IndexOfLastFullStop = filename.LastIndexOf('.');
+                    //filename = filename.Substring(0, IndexOfLastFullStop) + ".xlsx";
+                //}
+                //filePath = filePath + ".xlsx";
+
+                CancellationToken ct = new CancellationToken();
+                var Pth = await PickFolderAsync(ct);
+                Pth = Pth + "\\" + filename + ".xlsx";
+
+                wb.SaveAs(Pth);
+
+
+                //wb.SaveAs(filePath);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
+
+            async Task<string> PickFolderAsync(CancellationToken cancellationToken)
+            {
+                var result = await FolderPicker.Default.PickAsync(cancellationToken);
+                if (result.IsSuccessful)
+                {
+                    await Toast.Make($"The folder was picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show(cancellationToken);
+                }
+                else
+                {
+                    await Toast.Make($"The folder was not picked with error: {result.Exception.Message}").Show(cancellationToken);
+                }
+                return result.Folder.Path;
+            }
+
+        }
+
+
     }
 }

@@ -52,45 +52,63 @@
                                  Grid.Row="0">
                 <Label Text="Income"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding AllSitesIncome}"
                        Margin="5"
+                       TextColor="White"
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="1"
                                  Grid.Row="0">
                 <Label Text="Expenses"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding AllSitesExpenses}"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="2"
                                  Grid.Row="0">
                 <Label Text="Tips"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding AllSitesTips}"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="3"
                                  Grid.Row="0">
                 <Label Text="Net"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding AllSitesNet}"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
             <VerticalStackLayout Grid.Column="4"
                                  Grid.Row="0">
                 <Label Text="Epx/Inc"
+                                              TextColor="White"
+
                        Margin="5"
                        HorizontalTextAlignment="Center" />
                 <Label Text="{Binding AllExpensesPercent,StringFormat='{0:F1}%'}"
                        Margin="5"
+                                              TextColor="White"
+
                        HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
         </Grid>
