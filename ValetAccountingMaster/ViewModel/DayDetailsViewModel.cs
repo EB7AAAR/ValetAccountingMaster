@@ -115,8 +115,10 @@ namespace ValetAccountingMaster.ViewModel
 
                 dt.AcceptChanges();
 
-                string filename = CurrentDateTime.Month.ToString() + "-" + CurrentDateTime.Year.ToString() + "-" + SelectedSite.ID;
-                string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
+                string filename = (DateTime.Now.Year.ToString() +
+                    DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() +
+                    DateTime.Now.Hour.ToString()+ DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString());
+                //string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
 
                 XLWorkbook wb = new XLWorkbook();
 
@@ -131,10 +133,11 @@ namespace ValetAccountingMaster.ViewModel
 
                 CancellationToken ct = new CancellationToken();
                 var Pth = await PickFolderAsync(ct);
-                Pth = Pth + "\\" + filename + ".xlsx";
-
-                wb.SaveAs(Pth);
-
+                //Pth = Pth + "/" + filename + ".xlsx";
+                filename = filename + ".xlsx";
+                var path = Path.Combine(Pth, filename);
+                wb.SaveAs(path);
+                
 
                 //wb.SaveAs(filePath);
             }
@@ -149,11 +152,11 @@ namespace ValetAccountingMaster.ViewModel
                 var result = await FolderPicker.Default.PickAsync(cancellationToken);
                 if (result.IsSuccessful)
                 {
-                    await Toast.Make($"The folder was picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show(cancellationToken);
+                    //await Toast.Make($"The folder was picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show(cancellationToken);
                 }
                 else
                 {
-                    await Toast.Make($"The folder was not picked with error: {result.Exception.Message}").Show(cancellationToken);
+                    //await Toast.Make($"The folder was not picked with error: {result.Exception.Message}").Show(cancellationToken);
                 }
                 return result.Folder.Path;
             }

@@ -8,30 +8,37 @@
              x:DataType="viewmodel:DayDetailsViewModel"
              Title="{Binding Title}"
              FlowDirection="LeftToRight">
-    <Grid RowDefinitions="50,35,*">
+    <Grid RowDefinitions="75,35,*">
          <Grid Grid.Row="0"
        ColumnDefinitions="*,*,*"
        BackgroundColor="Transparent"
-       ColumnSpacing="50"
+       ColumnSpacing="20"
        >
      
-     <HorizontalStackLayout BackgroundColor="Transparent"
+     <VerticalStackLayout BackgroundColor="Transparent"
                             VerticalOptions="Center"
                             Grid.Column="0"
+                          
                             >
+         
          <Label Text="DATE:"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 FontSize="20" />
-         <DatePicker x:Name="datePicker"
-                     HorizontalOptions="Center"
-                     VerticalOptions="Center"
-                     Date="{Binding CurrentDateTime}"
-                     PropertyChanged="DatePicker_PropertyChanged"
-                     FontSize="20" />
          
-     </HorizontalStackLayout>
-     <HorizontalStackLayout BackgroundColor="Transparent"
+        <DatePicker x:Name="datePicker"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Date="{Binding CurrentDateTime}"
+                             PropertyChanged="DatePicker_PropertyChanged"
+                             FontSize="20"
+                             />
+
+        
+         
+         
+     </VerticalStackLayout>
+     <VerticalStackLayout BackgroundColor="Transparent"
                             Grid.Column="1"
                             VerticalOptions="Center"
                             >
@@ -49,7 +56,7 @@
                  HorizontalTextAlignment="Center"
                  SelectedIndexChanged="Picker_SelectedIndexChanged"
                  FontSize="20" />
-     </HorizontalStackLayout >
+     </VerticalStackLayout >
      <HorizontalStackLayout Grid.Column="2"
                             Padding="5">
          <Button BackgroundColor="BlueViolet"
