@@ -23,6 +23,8 @@ namespace ValetAccountingMaster.Services
 
         public List<Record> Records { get; set; }
 
+
+
         async void Connect()
         {
             var auth = "VpHKztdyUC6A8omWOdUsvsBJGWOcNluSttprQrc6"; // your app secret
@@ -45,6 +47,20 @@ namespace ValetAccountingMaster.Services
             foreach (var record in recs)
             {
                 Records.Add(record.Object);
+            }
+        }
+
+        public async Task GetPermanentRecords()
+        {
+            var recs = await firebaseClient
+                .Child("PermanentRecords")
+                .OrderByKey()
+                .OnceAsync<Record>();
+
+            Records.Clear();
+            foreach (var record in recs)
+            {
+               Records.Add(record.Object);
             }
         }
 

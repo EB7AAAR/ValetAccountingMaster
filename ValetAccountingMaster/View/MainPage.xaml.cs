@@ -20,8 +20,8 @@ public partial class MainPage : ContentPage
         base.OnAppearing();
         if (!_recordsViewModel.IsAlreadyCreated)
         {
-            await _recordsViewModel.GetFirebaseRecordAsync();
             await _recordsViewModel.GetSqlAllRecordsAsync();
+            await _recordsViewModel.GetFirebaseRecordAsync();
             await _recordsViewModel.MatchRecords();
             _recordsViewModel.IsAlreadyCreated = true;
         }

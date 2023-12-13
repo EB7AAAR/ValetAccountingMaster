@@ -11,6 +11,12 @@ using ClosedXML.Excel;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Storage;
+using Google.Apis.Sheets.v4;
+using Google.Apis.Services;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Util.Store;
+using System.Security.Cryptography.X509Certificates;
+using Google.Apis.Sheets.v4.Data;
 
 namespace ValetAccountingMaster.ViewModel
 {
@@ -91,75 +97,133 @@ namespace ValetAccountingMaster.ViewModel
         [RelayCommand]
         async Task Export()
         {
+
             try
             {
-                DataTable dt = new DataTable();
-                dt.Columns.Add("Day");
-                dt.Columns.Add("Inc");
-                dt.Columns.Add("Exp");
-                dt.Columns.Add("Tip");
-                dt.Columns.Add("Net");
-                dt.Columns.Add("Wrks");
+                string[] scopes = {SheetsService.Scope.Spreadsheets };
+                var service = new SheetsService(new BaseClientService.Initializer()
+                { HttpClientInitializer = GoogleWebAuthorizationBroker.
+                AuthorizeAsync(new ClientSecrets {
+                    ClientId = "870346727529-kjf1ljm7adbe4dt2vgqe4t2uaupmv4rv.apps.googleusercontent.com",
+                    ClientSecret = "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",
+                }, scopes, "user", CancellationToken.None, new FileDataStore("MyAppsToken")).Result,
+                    ApplicationName = "google sheet api test", });
 
-                foreach (SqlRecord s in SelectedMonthRecords)
+                SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum valueInputOption  = 
+                    SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+                SpreadsheetsResource.ValuesResource.GetRequest getRequest = service.Spreadsheets.Values.Get(
+                    "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", "Records!A:F");
+
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = 
+                    delegate ( object sender2, X509Certificate certificate,
+                    X509Chain chain,System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    { return true; };
+
+                
+                    
+
+                foreach (var rec in selectedMonthRecords)
                 {
-                    DataRow dr = dt.NewRow();
-                    dr[0] = s.Date;
-                    dr[1] = Convert.ToDouble(s.Income);
-                    dr[2] = Convert.ToDouble(s.DailyExp);
-                    dr[3] = Convert.ToDouble(s.Tip);
-                    dr[4] = Convert.ToDouble(s.DailyNet);
-                    dr[5] = Convert.ToDouble(s.Workers);
-                    dt.Rows.Add(dr);
+                    ValueRange getResponse = getRequest.Execute();
+                    IList<IList<object>> values = getResponse.Values;
+                    var range = $"{"Records"}!A" + (values.Count + 1) + ":F" + values.Count + 1;
+                    var valueRange = new ValueRange();
+                    valueRange.Values = new List<IList<object>> { new  List<object>()
+                {rec.ID,rec.Income,rec.DailyExp,rec.Tip,rec.DailyNet,rec.Workers }};
+
+                    var updateRequest = service.Spreadsheets.Values.Update(valueRange,
+                        "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", range);
+                    updateRequest.ValueInputOption = valueInputOption;
+
+                    var updateResponse = updateRequest.Execute();
                 }
 
-                dt.AcceptChanges();
-
-                string filename = (DateTime.Now.Year.ToString() +
-                    DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() +
-                    DateTime.Now.Hour.ToString()+ DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString());
-                //string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
-
-                XLWorkbook wb = new XLWorkbook();
-
-                var ws = wb.Worksheets.Add(dt, "Sheet 1");
-
-                //if (filename.Contains("."))
-                //{
-                    //int IndexOfLastFullStop = filename.LastIndexOf('.');
-                    //filename = filename.Substring(0, IndexOfLastFullStop) + ".xlsx";
-                //}
-                //filePath = filePath + ".xlsx";
-
-                CancellationToken ct = new CancellationToken();
-                var Pth = await PickFolderAsync(ct);
-                //Pth = Pth + "/" + filename + ".xlsx";
-                filename = filename + ".xlsx";
-                var path = Path.Combine(Pth, filename);
-                wb.SaveAs(path);
                 
-
-                //wb.SaveAs(filePath);
+                 
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
                 throw;
             }
 
-            async Task<string> PickFolderAsync(CancellationToken cancellationToken)
-            {
-                var result = await FolderPicker.Default.PickAsync(cancellationToken);
-                if (result.IsSuccessful)
-                {
-                    //await Toast.Make($"The folder was picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show(cancellationToken);
-                }
-                else
-                {
-                    //await Toast.Make($"The folder was not picked with error: {result.Exception.Message}").Show(cancellationToken);
-                }
-                return result.Folder.Path;
-            }
+
+
+
+
+
+
+
+            //try
+            //{
+            //    DataTable dt = new DataTable();
+            //    dt.Columns.Add("Day");
+            //    dt.Columns.Add("Inc");
+            //    dt.Columns.Add("Exp");
+            //    dt.Columns.Add("Tip");
+            //    dt.Columns.Add("Net");
+            //    dt.Columns.Add("Wrks");
+
+            //    foreach (SqlRecord s in SelectedMonthRecords)
+            //    {
+            //        DataRow dr = dt.NewRow();
+            //        dr[0] = s.Date;
+            //        dr[1] = Convert.ToDouble(s.Income);
+            //        dr[2] = Convert.ToDouble(s.DailyExp);
+            //        dr[3] = Convert.ToDouble(s.Tip);
+            //        dr[4] = Convert.ToDouble(s.DailyNet);
+            //        dr[5] = Convert.ToDouble(s.Workers);
+            //        dt.Rows.Add(dr);
+            //    }
+
+            //    dt.AcceptChanges();
+
+            //    string filename = (DateTime.Now.Year.ToString() +
+            //        DateTime.Now.Month.ToString() + DateTime.Now.Day.ToString() +
+            //        DateTime.Now.Hour.ToString()+ DateTime.Now.Minute.ToString() + DateTime.Now.Second.ToString());
+            //    //string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
+
+            //    XLWorkbook wb = new XLWorkbook();
+
+            //    var ws = wb.Worksheets.Add(dt, "Sheet 1");
+
+            //    //if (filename.Contains("."))
+            //    //{
+            //        //int IndexOfLastFullStop = filename.LastIndexOf('.');
+            //        //filename = filename.Substring(0, IndexOfLastFullStop) + ".xlsx";
+            //    //}
+            //    //filePath = filePath + ".xlsx";
+
+            //    CancellationToken ct = new CancellationToken();
+            //    var Pth = await PickFolderAsync(ct);
+            //    //Pth = Pth + "/" + filename + ".xlsx";
+            //    filename = filename + ".xlsx";
+            //    var path = Path.Combine(Pth, filename);
+            //    wb.SaveAs(path);
+                
+
+            //    //wb.SaveAs(filePath);
+            //}
+            //catch (Exception e)
+            //{
+
+            //    throw;
+            //}
+
+            //async Task<string> PickFolderAsync(CancellationToken cancellationToken)
+            //{
+            //    var result = await FolderPicker.Default.PickAsync(cancellationToken);
+            //    if (result.IsSuccessful)
+            //    {
+            //        //await Toast.Make($"The folder was picked: Name - {result.Folder.Name}, Path - {result.Folder.Path}", ToastDuration.Long).Show(cancellationToken);
+            //    }
+            //    else
+            //    {
+            //        //await Toast.Make($"The folder was not picked with error: {result.Exception.Message}").Show(cancellationToken);
+            //    }
+            //    return result.Folder.Path;
+            //}
 
         }
 

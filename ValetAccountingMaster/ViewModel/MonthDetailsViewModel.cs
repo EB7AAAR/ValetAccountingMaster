@@ -139,7 +139,7 @@ namespace ValetAccountingMaster.ViewModel
             //.AddValue(CurrentViewMonthRecord.DailyExp, "Expenses")
             //.AddValue(CurrentViewMonthRecord.Income, "Income")
             //.BuildSeries();
-            PieTotal = (int)Double.Round(CurrentViewMonthRecord.Income * 1.25);
+            PieTotal = (int)Double.Round((CurrentViewMonthRecord.Income+ CurrentViewMonthRecord.DailyExp));
 
             if(CurrentViewMonthRecord.Income!=0)
             ExpensesPercent = (CurrentViewMonthRecord.DailyExp / CurrentViewMonthRecord.Income) * 100;

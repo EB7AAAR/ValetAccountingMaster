@@ -98,7 +98,7 @@ namespace ValetAccountingMaster.ViewModel
 
             //dotnet publish -c Release -f:net7.0-android
 
-            //File.Delete(Path.Combine(FileSystem.AppDataDirectory, "MyDatabase.db3"));
+            //////File.Delete(Path.Combine(FileSystem.AppDataDirectory, "MyDatabase.db3"));
             //dotnet publish -f net7.0-ios -c Release -p:ArchiveOnBuild=true -p:RuntimeIdentifier=ios-arm64 -p:CodesignKey="Apple Distribution: John Smith (AY2GDE9QM7)" -p:CodesignProvision="MyMauiApp"
 
             Title = "TOTAL MONTH SUMMERY";
@@ -108,13 +108,7 @@ namespace ValetAccountingMaster.ViewModel
             CurrentDateTime = new DateTime(DateTime.Now.Date.Year, DateTime.Now.Date.Month, 1);
         }
 
-        public async Task GetFirebaseRecordAsync()
-        {
-            await CheckConnectivity();
-
-            await fireBaseService.GetRecords();
-
-        }
+        
 
         public async Task GetSqlAllRecordsAsync()
         {
@@ -162,6 +156,20 @@ namespace ValetAccountingMaster.ViewModel
             }
         }
 
+
+        public async Task GetFirebaseRecordAsync()
+        {
+            await CheckConnectivity();
+            await fireBaseService.GetPermanentRecords();
+            if (SqlRecords.Count != Records.Count )
+            {
+                await MatchPermanentRecords();
+            }
+
+            await fireBaseService.GetRecords();
+
+        }
+
         public async Task MatchRecords()
         {
             await CheckConnectivity();
@@ -181,10 +189,50 @@ namespace ValetAccountingMaster.ViewModel
                 await SaveRecordAsync();
                 await DeleteFirebaseRecordAsync(record);
                 Records.Remove(record);
-                await AddToMonthRecords();
+                //await AddToMonthRecords();
             }
+            //foreach (var record in SqlMonthRecords)
+            //{
+            //    await fireBaseService.SaveMonthRecord(record);
+            //}
         }
 
+        public async Task MatchPermanentRecords()
+        {
+            await CheckConnectivity();
+            var tempRecs = Records.OrderBy(o => o.Date).ToList();
+            foreach (var record in tempRecs)
+            {
+                var matchingSqlRec = SqlRecords.Where(x=>x.ID == record.ID && x.Date == record.Date).ToList();
+
+                if (matchingSqlRec.Any())
+                {
+                    Records.Remove(record);
+                    continue;
+                }
+
+                SqlRecord sqlRec = new();
+                sqlRec.Workers = record.Workers;
+                sqlRec.DailyExp = record.DailyExp;
+                sqlRec.DailyNet = record.DailyNet;
+                sqlRec.Tip = record.Tip;
+                sqlRec.ID = record.ID;
+                sqlRec.Date = record.Date;
+                sqlRec.Income = record.Income;
+                SetOperatingSqlRecord(sqlRec);
+                CheckSite(sqlRec);
+                await SaveRecordAsync();
+                //await DeleteFirebaseRecordAsync(record);
+                Records.Remove(record);
+                await AddToMonthRecords();
+            }
+
+            foreach (var record in SqlMonthRecords)
+            {
+                
+                await fireBaseService.SaveMonthRecord(record);
+            }
+        }
         private async void CheckSite(SqlRecord sqlRec)
         {
             if ((await context.GetFilteredAsync<SiteName>(p => p.ID == sqlRec.ID)).FirstOrDefault() is null)
@@ -270,7 +318,7 @@ namespace ValetAccountingMaster.ViewModel
             //.AddValue(AllSitesIncome, "Income")
             //.BuildSeries();
 
-            PieTotal = (int)Double.Round(AllSitesIncome * 1.25);
+            PieTotal = (int)Double.Round(AllSitesIncome+AllSitesExpenses);
         }
         public async Task AddToMonthRecords()
         {
@@ -358,7 +406,7 @@ namespace ValetAccountingMaster.ViewModel
                     };
                     await context.AddItemAsync<SqlMonthRecord>(OperatingSqlMonthRecord);
                     SqlMonthRecords.Add(OperatingSqlMonthRecord);
-                    await fireBaseService.SaveMonthRecord(OperatingSqlMonthRecord);
+                    //await fireBaseService.SaveMonthRecord(OperatingSqlMonthRecord);
                 }
                 else
                 {
@@ -419,7 +467,7 @@ namespace ValetAccountingMaster.ViewModel
 
                     SqlMonthRecords.RemoveAt(index);
                     SqlMonthRecords.Insert(index, sqlMonthRecCopy);
-                    await fireBaseService.SaveMonthRecord(OperatingSqlMonthRecord);
+                    //await fireBaseService.SaveMonthRecord(OperatingSqlMonthRecord);
                 }
                 //SetOperatingSqlMonthRecordCommand.Execute(new());
             }, busyText);
