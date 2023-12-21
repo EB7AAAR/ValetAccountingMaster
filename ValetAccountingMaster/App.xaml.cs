@@ -12,7 +12,7 @@ public partial class App : Application
 
 		MainPage = new AppShell();
 
-        var x = 0; 
+        var x = 1; 
 	}
     protected override void OnStart()
     {

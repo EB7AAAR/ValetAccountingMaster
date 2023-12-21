@@ -7,7 +7,6 @@ using ValetAccountingMaster.Model;
 using ValetAccountingMaster.Data;
 using CommunityToolkit.Mvvm.Input;
 using System.Data;
-using ClosedXML.Excel;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Storage;
@@ -17,6 +16,11 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Util.Store;
 using System.Security.Cryptography.X509Certificates;
 using Google.Apis.Sheets.v4.Data;
+using Photos;
+using EventKit;
+using Foundation;
+using System.Text;
+using System;
 
 namespace ValetAccountingMaster.ViewModel
 {
@@ -94,66 +98,132 @@ namespace ValetAccountingMaster.ViewModel
             
         }
 
+        private async Task<string> ToCsvStringAsync(DataTable dataTable)
+        {
+            var builder = new StringBuilder();
+
+            // Add headers
+            for (int i = 0; i < dataTable.Columns.Count; i++)
+            {
+                builder.Append($"{dataTable.Columns[i].ColumnName},");
+            }
+            builder.AppendLine();
+
+            // Add rows
+            foreach (DataRow row in dataTable.Rows)
+            {
+                for (int i = 0; i < dataTable.Columns.Count; i++)
+                {
+                    builder.Append($"{row[i]},");
+                }
+                builder.AppendLine();
+            }
+
+            return builder.ToString();
+        }
+
         [RelayCommand]
         async Task Export()
         {
 
-            try
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("Day");
+            dt.Columns.Add("Inc");
+            dt.Columns.Add("Exp");
+            dt.Columns.Add("Tip");
+            dt.Columns.Add("Net");
+            dt.Columns.Add("Wrks");
+
+            foreach (SqlRecord s in SelectedMonthRecords)
             {
-                string[] scopes = {SheetsService.Scope.Spreadsheets };
-                var service = new SheetsService(new BaseClientService.Initializer()
-                { HttpClientInitializer = GoogleWebAuthorizationBroker.
-                AuthorizeAsync(new ClientSecrets {
-                    ClientId = "870346727529-kjf1ljm7adbe4dt2vgqe4t2uaupmv4rv.apps.googleusercontent.com",
-                    ClientSecret = "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",
-                }, scopes, "user", CancellationToken.None, new FileDataStore("MyAppsToken")).Result,
-                    ApplicationName = "google sheet api test", });
-
-                SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum valueInputOption  = 
-                    SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
-
-                SpreadsheetsResource.ValuesResource.GetRequest getRequest = service.Spreadsheets.Values.Get(
-                    "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", "Records!A:F");
-
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = 
-                    delegate ( object sender2, X509Certificate certificate,
-                    X509Chain chain,System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                    { return true; };
-
-                
-                    
-
-                foreach (var rec in selectedMonthRecords)
-                {
-                    ValueRange getResponse = getRequest.Execute();
-                    IList<IList<object>> values = getResponse.Values;
-                    var range = $"{"Records"}!A" + (values.Count + 1) + ":F" + values.Count + 1;
-                    var valueRange = new ValueRange();
-                    valueRange.Values = new List<IList<object>> { new  List<object>()
-                {rec.ID,rec.Income,rec.DailyExp,rec.Tip,rec.DailyNet,rec.Workers }};
-
-                    var updateRequest = service.Spreadsheets.Values.Update(valueRange,
-                        "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", range);
-                    updateRequest.ValueInputOption = valueInputOption;
-
-                    var updateResponse = updateRequest.Execute();
-                }
-
-                
-                 
-            }
-            catch (Exception)
-            {
-
-                throw;
+                DataRow dr = dt.NewRow();
+                dr[0] = s.Date;
+                dr[1] = Convert.ToDouble(s.Income);
+                dr[2] = Convert.ToDouble(s.DailyExp);
+                dr[3] = Convert.ToDouble(s.Tip);
+                dr[4] = Convert.ToDouble(s.DailyNet);
+                dr[5] = Convert.ToDouble(s.Workers);
+                dt.Rows.Add(dr);
             }
 
+            dt.AcceptChanges();
+
+            var csvString = await ToCsvStringAsync(dt);
+
+            // Create temporary file
+            var tempFile = Path.Combine(FileSystem.Current.CacheDirectory, $"{Guid.NewGuid()}.csv");
+            await File.WriteAllTextAsync(tempFile, csvString);
+
+            // Create content for sharing
+            //var shareContent = new ShareContent
+            //{
+            //Title = "DataTable Export",
+            //Text = "Sharing DataTable data as CSV",
+            //FilePaths = new string[] { tempFile }
+            //};
+
+            await Clipboard.Default.SetTextAsync(csvString);
 
 
+            await Share.RequestAsync(new ShareFileRequest
+            {
+                Title = Title,
+                File = new ShareFile(tempFile)
+            });
+
+            // Show share sheet
+            //await Share.RequestAsync(shareContent);
+
+            #region MyRegion
+            //try
+            //{
+            //    string[] scopes = {SheetsService.Scope.Spreadsheets };
+            //    var service = new SheetsService(new BaseClientService.Initializer()
+            //    { HttpClientInitializer = GoogleWebAuthorizationBroker.
+            //    AuthorizeAsync(new ClientSecrets {
+            //        ClientId = "870346727529-kjf1ljm7adbe4dt2vgqe4t2uaupmv4rv.apps.googleusercontent.com",
+            //        ClientSecret = "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",
+            //    }, scopes, "user", CancellationToken.None, new FileDataStore("MyAppsToken")).Result,
+            //        ApplicationName = "google sheet api test", });
+
+            //    SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum valueInputOption  = 
+            //        SpreadsheetsResource.ValuesResource.UpdateRequest.ValueInputOptionEnum.USERENTERED;
+
+            //    SpreadsheetsResource.ValuesResource.GetRequest getRequest = service.Spreadsheets.Values.Get(
+            //        "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", "Records!A:F");
+
+            //    System.Net.ServicePointManager.ServerCertificateValidationCallback = 
+            //        delegate ( object sender2, X509Certificate certificate,
+            //        X509Chain chain,System.Net.Security.SslPolicyErrors sslPolicyErrors)
+            //        { return true; };
 
 
+            //    foreach (var rec in selectedMonthRecords)
+            //    {
+            //        ValueRange getResponse = getRequest.Execute();
+            //        IList<IList<object>> values = getResponse.Values;
+            //        var range = $"{"Records"}!A" + (values.Count + 1) + ":F" + values.Count + 1;
+            //        var valueRange = new ValueRange();
+            //        valueRange.Values = new List<IList<object>> { new  List<object>()
+            //    {rec.ID,rec.Income,rec.DailyExp,rec.Tip,rec.DailyNet,rec.Workers }};
+
+            //        var updateRequest = service.Spreadsheets.Values.Update(valueRange,
+            //            "1hMlZiNVT7H8MzMginSFgg5wd3abCKc1arc4Im1QLe_Y", range);
+            //        updateRequest.ValueInputOption = valueInputOption;
+
+            //        var updateResponse = updateRequest.Execute();
+            //    }
+
+            //}
+            //catch (Exception)
+            //{
+
+            //    throw;
+            //}
 
 
+            #endregion
 
             //try
             //{
@@ -201,7 +271,7 @@ namespace ValetAccountingMaster.ViewModel
             //    filename = filename + ".xlsx";
             //    var path = Path.Combine(Pth, filename);
             //    wb.SaveAs(path);
-                
+
 
             //    //wb.SaveAs(filePath);
             //}
@@ -226,7 +296,6 @@ namespace ValetAccountingMaster.ViewModel
             //}
 
         }
-
-
+        
     }
 }

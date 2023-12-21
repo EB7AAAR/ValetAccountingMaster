@@ -65,6 +65,9 @@ namespace ValetAccountingMaster.ViewModel
         private SqlMonthRecord currentViewMonthRecord = new();
 
         [ObservableProperty]
+        public bool isLoading = false;
+
+        [ObservableProperty]
         private double allSitesIncome;
         [ObservableProperty]
         private double allSitesExpenses;
@@ -112,6 +115,7 @@ namespace ValetAccountingMaster.ViewModel
 
         public async Task GetSqlAllRecordsAsync()
         {
+            IsLoading = true;
             await ExcuteAsync(async () =>
             {
                 var sqlRecords = await context.GetAllAsync<SqlRecord>();
@@ -154,11 +158,14 @@ namespace ValetAccountingMaster.ViewModel
             {
                 SelectedSite = Sites.FirstOrDefault();
             }
+            IsLoading = false;
         }
 
 
         public async Task GetFirebaseRecordAsync()
         {
+            IsLoading = true;
+
             await CheckConnectivity();
             await fireBaseService.GetPermanentRecords();
             if (SqlRecords.Count != Records.Count )
@@ -167,11 +174,15 @@ namespace ValetAccountingMaster.ViewModel
             }
 
             await fireBaseService.GetRecords();
+            IsLoading = false;
+
 
         }
 
         public async Task MatchRecords()
         {
+            IsLoading = true;
+
             await CheckConnectivity();
             var tempRecs = Records.OrderBy(o => o.Date).ToList();
             foreach (var record in tempRecs)
@@ -195,10 +206,14 @@ namespace ValetAccountingMaster.ViewModel
             //{
             //    await fireBaseService.SaveMonthRecord(record);
             //}
+            IsLoading = false;
+
         }
 
         public async Task MatchPermanentRecords()
         {
+            IsLoading = true;
+
             await CheckConnectivity();
             var tempRecs = Records.OrderBy(o => o.Date).ToList();
             foreach (var record in tempRecs)
@@ -232,6 +247,8 @@ namespace ValetAccountingMaster.ViewModel
                 
                 await fireBaseService.SaveMonthRecord(record);
             }
+            IsLoading = false;
+
         }
         private async void CheckSite(SqlRecord sqlRec)
         {
@@ -269,7 +286,7 @@ namespace ValetAccountingMaster.ViewModel
             AllSitesTips = 0;
             AllSitesWorkers = 0;
             AllSitesNet = 0;
-            foreach (var item in x)
+            foreach (var item in x)     
             {
                 AllSitesIncome += item.Income;
                 AllSitesExpenses += item.DailyExp;
@@ -472,7 +489,15 @@ namespace ValetAccountingMaster.ViewModel
                 //SetOperatingSqlMonthRecordCommand.Execute(new());
             }, busyText);
         }
-
+        [RelayCommand]
+        async Task UpdateRecords()
+        {
+            IsLoading = true;
+            await GetSqlAllRecordsAsync();
+            await GetFirebaseRecordAsync();
+            await MatchRecords();
+            IsLoading = false;
+        }
         [RelayCommand]
         async Task GoToMonthDetails()
         {

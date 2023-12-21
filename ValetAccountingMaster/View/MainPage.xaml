@@ -8,7 +8,7 @@
              x:DataType="viewmodel:RecordsViewModel"
              Title="{Binding Title}"
              FlowDirection="LeftToRight">
-    <Grid RowDefinitions="80,75,*">
+    <Grid RowDefinitions="140,75,*">
         <Grid Grid.Row="0"
               BackgroundColor="Transparent"
               ColumnDefinitions="*,*,*"
@@ -22,7 +22,7 @@
                     <Label Text="SELECT A DATE:"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           FontSize="15" />
+                           FontSize="20" />
                     <DatePicker x:Name="datePicker"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center"
@@ -33,13 +33,22 @@
             </Frame>
             <Frame Grid.Column="0"
                    Grid.Row="0"
-                   Grid.RowSpan="2"
+                   Grid.RowSpan="1"
                    BackgroundColor="Transparent">
-                <Button BackgroundColor="BlueViolet"
+                <Button BackgroundColor="MediumVioletRed"
                         Text="Details"
                         TextColor="White"
                         Command="{Binding GoToMonthDetailsCommand}"
                         CommandParameter="{Binding .}" />
+            </Frame>
+            <Frame Grid.Column="0"
+                   Grid.Row="1"
+                   Grid.RowSpan="1"
+                   BackgroundColor="Transparent">
+                <Button BackgroundColor="Green"
+                        Text="Update"
+                        TextColor="White"
+                        Command="{Binding UpdateRecordsCommand}"/>
             </Frame>
         </Grid>
         <Grid Grid.Row="1"
@@ -130,6 +139,11 @@
                           InitialRotation="45"
                           MaxAngle="270"
                           MaxValue="{Binding PieTotal}"></lvc:PieChart>
+            <ActivityIndicator x:Name="busyIndicator"
+                               Color="Red"
+                               VerticalOptions="Start"
+                               IsRunning="{Binding IsLoading, Mode=TwoWay}" 
+                               />       
         </Grid>
     </Grid>
 </ContentPage>
